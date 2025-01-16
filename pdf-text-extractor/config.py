@@ -6,13 +6,13 @@ load_dotenv()
 
 __configuration = {
     "Default": {
-        "InputPdfFile": "C:\\src\\data\\pdf-to-onenote\\AHEAD NOFO Final 11.15.2023 508.pdf",
-        "OutputFolder": "C:\\src\\data\\pdf-to-onenote\\AHEAD NOFO Final 11.15.2023 508",
+        "InputPdfFile": "C:\\src\\data\\pdf-to-onenote\\2nd Round V2 Revised Project Narrative 052224 for Milliman.pdf",
+        "OutputFolder": "C:\\src\\data\\pdf-to-onenote\\2nd Round V2 Revised Project Narrative 052224 With Tables",
         "NormalizeText": False,
-        #"NewSectionRegex": '(?:I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX)\\.(?!.*[\\(\\)]).+',
-        "NewSectionRegex": '^[A-Z]\\.\\s[^\\.\\d]+',
-        "ExtractBasedOnTableOfContents": True,
-        "TableOfContentsPageRange": [2,4]
+        "NewSectionRegex": '^(?:I|II|III|IV|V|VI|VII|VIII|IX|X|XI|XII|XIII|XIV|XV|XVI|XVII|XVIII|XIX|XX)\\.(?!.*[\\(\\)]).+',
+        #"NewSectionRegex": '^[A-Z]\\.\\s[^\\.\\d]+',
+        "ExtractBasedOnTableOfContents": False,
+        #"TableOfContentsPageRange": [2,4]
     }
 }
 

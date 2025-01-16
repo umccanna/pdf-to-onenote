@@ -4,6 +4,7 @@ import re
 import getopt
 import sys
 from pathlib import Path 
+from tabulate import tabulate
 import json
 
 def normalize_text(text: str):
@@ -83,6 +84,7 @@ def extract_text():
     with pdfplumber.open(input_file) as pdf:
         for i, page in enumerate(pdf.pages):
             page_text = page.extract_text()
+            tables = page.extract_table()
             page.flush_cache()
             
             if should_normalize_text:
@@ -95,7 +97,7 @@ def extract_text():
                     section_name = f"{section_counter:02}. {header_name}"
                     section_counter+=1
                 elif current_header is not None:
-                    header_name = current_header.strip()
+                    header_name = current_header.strip().replace("/", " or ").replace("\\", " or ")
                     previous_section_name = section_name
                     section_name = f'{section_counter:02} - {header_name}'
                     section_counter+=1
@@ -106,7 +108,7 @@ def extract_text():
                     section_name = f"{section_counter:02}. {header_name}"
                     section_counter+=1
                 elif new_section_match:
-                    header_name = new_section_match.group().strip()
+                    header_name = new_section_match.group().strip().replace("/", " or ").replace("\\", " or ")
                     previous_section_name = section_name
                     section_name = f'{section_counter:02} - {header_name}'
                     section_counter+=1
@@ -114,6 +116,23 @@ def extract_text():
                     
             if not section_name:
                 raise Exception(f'No section name is set! Page: {i+1}')
+            
+            if tables:
+                ascii_table = tabulate(tables, headers="firstrow", tablefmt="grid")
+                first_cell = tables[0][0]
+                last_cell = tables[-1][-1]
+                if not first_cell or not last_cell:
+                    first_cell = ''
+                    last_cell = ''
+                else:
+                    if '\n' in first_cell:
+                        first_cell = first_cell.split('\n')[0]
+                    if '\n' in last_cell:
+                        last_cell = last_cell.split('\n')[-1]
+                
+                starting_index = page_text.index(first_cell)
+                ending_index = page_text.index(last_cell) + len(last_cell)
+                page_text = page_text[:starting_index] + '\n\n' + ascii_table + '\n\n' + page_text[ending_index:]
 
             stripped_text = page_text.strip()
             if not stripped_text.startswith(header_name) and header_name in stripped_text and previous_section_name:
